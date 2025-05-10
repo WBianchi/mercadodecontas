@@ -1,0 +1,7 @@
+-- AlterTable
+ALTER TABLE "Product" 
+ADD COLUMN "fileLink" TEXT,
+ADD COLUMN "deliveryType" TEXT NOT NULL DEFAULT 'link',
+ADD COLUMN "deliveryTime" TEXT NOT NULL DEFAULT '24h',
+ADD COLUMN "refundTime" TEXT NOT NULL DEFAULT '7d',
+ADD COLUMN "seoScore" INTEGER NOT NULL DEFAULT 0;

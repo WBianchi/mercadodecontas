@@ -1,0 +1,18 @@
+# Configurações de servidores SMTP para recuperação de senha
+SMTP_HOST=smtp.example.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=seu-email@example.com
+SMTP_PASSWORD=sua-senha
+SMTP_FROM=noreply@mercadodecontas.com.br
+
+# Provedor OAuth do Google
+GOOGLE_CLIENT_ID=seu-client-id-google
+GOOGLE_CLIENT_SECRET=seu-client-secret-google
+
+# Provedor OAuth do Facebook
+FACEBOOK_CLIENT_ID=seu-app-id-facebook
+FACEBOOK_CLIENT_SECRET=seu-app-secret-facebook
+
+# URL da aplicação (para links em emails)
+NEXT_PUBLIC_APP_URL=https://mercadodecontas.com.br

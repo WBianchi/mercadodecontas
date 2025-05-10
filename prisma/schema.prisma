@@ -1,0 +1,325 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id              Int        @id @default(autoincrement())
+  username        String
+  email           String     @unique
+  password        String
+  role            Role       @default(ADMIN)
+  adminCommission Float
+  createdAt       DateTime   @default(now())
+  updatedAt       DateTime   @updatedAt
+  status          String     @default("active")
+  wpEmail         String?
+  wpFirstName     String?
+  wpLastName      String?
+  wpMetadata      Json?
+  wpRole          String?
+  wpUserId        Int?       @unique
+  wpUsername      String?
+  blogPosts       BlogPost[] @relation("AdminBlogPosts")
+  clientes        Cliente[]  @relation("AdminClientes")
+  lojistas        Lojista[]  @relation("AdminLojistas")
+  Pedido          Pedido[]
+
+  @@index([wpUserId])
+}
+
+model Lojista {
+  id                Int           @id @default(autoincrement())
+  username          String
+  email             String        @unique
+  password          String
+  role              Role          @default(LOJISTA)
+  lojistaCommission Float
+  photo             String?
+  banner            String?
+  gallery           String[]
+  address           String
+  city              String
+  state             String
+  number            String
+  neighborhood      String
+  cpfCnpj           String
+  corporateName     String
+  facebook          String?
+  instagram         String?
+  youtube           String?
+  linkedin          String?
+  tiktok            String?
+  x                 String?
+  telegram          String?
+  workingHours      String[]
+  description       String?
+  adminId           Int?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  status            String        @default("active")
+  wpMetadata        Json?
+  wpStoreBanner     String?
+  wpStorePhone      String?
+  wpStorePolicies   Json?
+  wpStoreSlug       String?       @unique
+  wpUserId          Int?          @unique
+  wpVendorId        Int?          @unique
+  admin             Admin?        @relation("AdminLojistas", fields: [adminId], references: [id])
+  Pedido            Pedido[]
+  products          Product[]
+  storeReviews      StoreReview[]
+
+  @@index([wpStoreSlug])
+  @@index([wpUserId])
+  @@index([wpVendorId])
+}
+
+model Cliente {
+  id                Int             @id @default(autoincrement())
+  username          String
+  email             String          @unique
+  password          String
+  role              Role            @default(CLIENTE)
+  adminId           Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+  status            String          @default("active")
+  wpBillingAddress  Json?
+  wpEmail           String?
+  wpFirstName       String?
+  wpLastName        String?
+  wpMetadata        Json?
+  wpRole            String?
+  wpShippingAddress Json?
+  wpUserId          Int?            @unique
+  wpUsername        String?
+  admin             Admin?          @relation("AdminClientes", fields: [adminId], references: [id])
+  Pedido            Pedido[]
+  productReviews    ProductReview[]
+  storeReviews      StoreReview[]
+
+  @@index([wpUserId])
+}
+
+model Product {
+  id               Int             @id @default(autoincrement())
+  name             String
+  description      String
+  shortDescription String
+  price            Float
+  discountPrice    Float?
+  pixPrice         Float?
+  productPhoto     String
+  productGallery   String[]
+  sku              String          @unique
+  inStock          Boolean         @default(true)
+  stockQuantity    Int?
+  fileLink         String?
+  lojistaId        Int
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+  wpAttributes     Json?
+  wpDateCreated    DateTime?
+  wpDateModified   DateTime?
+  wpMetadata       Json?
+  wpProductId      Int?            @unique
+  wpStatus         String?
+  wpType           String?
+  wpVariations     Json?
+  wpVisibility     String?
+  deliveryType     String          @default("link")
+  deliveryTime     String          @default("24h")
+  refundTime       String          @default("7d")
+  seoScore         Int             @default(0)
+  slug             String          @unique
+  orderItems       OrderItem[]
+  lojista          Lojista         @relation(fields: [lojistaId], references: [id])
+  reviews          ProductReview[]
+  Category         Category[]      @relation("CategoryToProduct")
+  tags             Tag[]           @relation("ProductToTag")
+
+  @@index([sku])
+  @@index([wpProductId])
+}
+
+model Category {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  slug          String    @unique
+  description   String
+  icon          String
+  image         String
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  wpCategoryId  Int?      @unique
+  wpDescription String?
+  wpDisplayType String?
+  wpImage       String?
+  wpMetadata    Json?
+  wpParentId    Int?
+  Product       Product[] @relation("CategoryToProduct")
+
+  @@index([wpCategoryId])
+}
+
+model Tag {
+  id            Int       @id @default(autoincrement())
+  name          String    @unique
+  wpDescription String?
+  wpMetadata    Json?
+  wpSlug        String?
+  wpTagId       Int?      @unique
+  products      Product[] @relation("ProductToTag")
+
+  @@index([wpTagId])
+}
+
+model ProductReview {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  clienteId Int
+  productId Int
+  createdAt DateTime @default(now())
+  cliente   Cliente  @relation(fields: [clienteId], references: [id])
+  product   Product  @relation(fields: [productId], references: [id])
+}
+
+model StoreReview {
+  id        Int      @id @default(autoincrement())
+  rating    Int
+  comment   String?
+  clienteId Int
+  lojistaId Int
+  createdAt DateTime @default(now())
+  cliente   Cliente  @relation(fields: [clienteId], references: [id])
+  lojista   Lojista  @relation(fields: [lojistaId], references: [id])
+}
+
+model BlogPost {
+  id               Int            @id @default(autoincrement())
+  title            String
+  description      String
+  shortDescription String
+  content          String
+  thumbnail        String
+  slug             String         @unique
+  featured         Boolean        @default(false)
+  published        Boolean        @default(false)
+  views            Int            @default(0)
+  readTime         Int
+  authorId         Int
+  createdAt        DateTime       @default(now())
+  updatedAt        DateTime       @updatedAt
+  author           Admin          @relation("AdminBlogPosts", fields: [authorId], references: [id])
+  categories       BlogCategory[] @relation("BlogCategoryToBlogPost")
+  tags             BlogTag[]      @relation("BlogPostToBlogTag")
+
+  @@index([authorId])
+  @@index([slug])
+  @@index([published])
+}
+
+model BlogCategory {
+  id          Int        @id @default(autoincrement())
+  name        String     @unique
+  slug        String     @unique
+  description String?
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+  posts       BlogPost[] @relation("BlogCategoryToBlogPost")
+
+  @@index([slug])
+}
+
+model BlogTag {
+  id        Int        @id @default(autoincrement())
+  name      String     @unique
+  slug      String     @unique
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  posts     BlogPost[] @relation("BlogPostToBlogTag")
+
+  @@index([slug])
+}
+
+model OrderItem {
+  id          Int      @id @default(autoincrement())
+  productName String
+  quantity    Int
+  value       Float
+  productId   Int?
+  pedidoId    Int
+  createdAt   DateTime @default(now())
+  Pedido      Pedido   @relation(fields: [pedidoId], references: [id])
+  product     Product? @relation(fields: [productId], references: [id])
+}
+
+model Pedido {
+  id                Int           @id @default(autoincrement())
+  paymentMethod     PaymentMethod
+  installments      Int?
+  address           String
+  city              String
+  neighborhood      String
+  clientIp          String?
+  cpfCnpj           String
+  clientEmail       String
+  clientName        String
+  clientPhone       String
+  orderSummary      String?
+  purchaseTime      DateTime      @default(now())
+  status            OrderStatus
+  lojistaCommission Float
+  adminCommission   Float
+  adminProfit       Float
+  lojistaProfit     Float
+  clienteId         Int
+  lojistaId         Int
+  adminId           Int?
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime
+  OrderItem         OrderItem[]
+  Admin             Admin?        @relation(fields: [adminId], references: [id])
+  Cliente           Cliente       @relation(fields: [clienteId], references: [id])
+  Lojista           Lojista       @relation(fields: [lojistaId], references: [id])
+}
+
+model PasswordReset {
+  id        Int      @id @default(autoincrement())
+  userType  String
+  userId    Int
+  token     String   @unique
+  expiry    DateTime
+  createdAt DateTime @default(now())
+
+  @@unique([userType, userId])
+}
+
+enum PaymentMethod {
+  PIX
+  BOLETO
+  CARTAO
+}
+
+enum OrderStatus {
+  AGUARDANDO
+  PAGO
+  CONCLUIDO
+  REEMBOLSADO
+  CANCELADO
+}
+
+enum Role {
+  ADMIN
+  LOJISTA
+  CLIENTE
+  ASSINANTE
+  EDITOR
+  AUTOR
+}

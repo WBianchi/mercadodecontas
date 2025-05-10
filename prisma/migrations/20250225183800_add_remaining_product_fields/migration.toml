@@ -1,0 +1,2 @@
+migration_name = "20250225183800_add_remaining_product_fields"
+database_name = "public"
