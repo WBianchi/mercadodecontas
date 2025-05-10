@@ -192,7 +192,6 @@ export function PixPayment({ value, onCreateOrder, disabled }: PixPaymentProps) 
             />
           </div>
           <span id="fd51c49b-1c84-423b-9071-898b109cb33e" className="block text-center mt-2 text-sm text-gray-600">fd51c49b-1c84-423b-9071-898b109cb33e</span>
-          <span id="fd51c49b-1c84-423b-9071-898b109cb33e" className="block text-center mt-2 text-sm text-gray-600">Escaneie o QR Code acima para pagar</span>
         </>
       )}
 
